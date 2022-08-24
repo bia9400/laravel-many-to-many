@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Post;
+use App\Tag;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,8 +31,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        
-        return view("admin.posts.create");
+        $tags=Tag::all();
+        return view("admin.posts.create", compact("tags"));
     }
 
     /**
@@ -46,11 +47,16 @@ class PostController extends Controller
             "name"=>"required|min:8",
             "content"=>"required|min:15",
             "slug"=>"nullable",
+            "tags"=>"nullable|exists:tags,id"
             
         ]);
         $post=new Post();
         $post->user_id = Auth::user()->id;
         $post->fill($data);
+        $post->save();
+        dd($data["tags"]);
+        
+        $post->tags()->attach($data["tags"]);
         $post->save();
         return redirect()->route("admin.posts.show",$post->id);
         

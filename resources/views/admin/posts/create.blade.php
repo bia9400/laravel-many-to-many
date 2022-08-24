@@ -14,6 +14,11 @@
                 <label for="exampleFormControlTextarea1" class="form-label">Contenuto Post</label>
                 <textarea name="content" class="form-control" id="exampleFormControlTextarea1" rows="3">{{ old('content') }}</textarea>
             </div>
+            <select name="tags[]" id="" multiple>
+                @foreach ($tags as $tag)
+                    <option value="{{$tag->id}}">{{$tag->name}}</option>
+                @endforeach
+            </select>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Salva Dati</button>
 

@@ -51,13 +51,16 @@ class PostController extends Controller
             
         ]);
         $post=new Post();
-        $post->user_id = Auth::user()->id;
-        $post->fill($data);
-        $post->save();
-        dd($data["tags"]);
         
-        $post->tags()->attach($data["tags"]);
+        $post->fill($data);
+        $post->user_id = Auth::user()->id;
+        
         $post->save();
+       
+        if (key_exists("tags", $data)) {
+            $post->tags()->attach($data["tags"]);
+        }
+       
         return redirect()->route("admin.posts.show",$post->id);
         
     }

@@ -105,10 +105,16 @@ class PostController extends Controller
             "name"=>"required|min:8",
             "content"=>"required|min:15",
             "slug"=>"nullable",
- 
+            "cover_img"=>"required|image"
         ]);
-        $post=Post::findOrFail($id);
         
+        $post=Post::findOrFail($id);
+        if(key_exists("cover_img",$data)){
+            if($post->cover_img){
+
+                Storage::delete($post->cover_img);
+            }
+        }
         $post->update($data);
       
         return redirect()->route("admin.posts.index");

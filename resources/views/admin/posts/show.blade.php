@@ -2,6 +2,7 @@
 @section('content')
     <div class="container">
         <h1>{{ $post->name }}</h1>
+        <img width=400px src="{{asset("/storage/" . $post->cover_img)}}" alt="">
         <p>{{ $post->content }}</p>
         <div>Tags:
             @foreach ($post->tags as $tag)

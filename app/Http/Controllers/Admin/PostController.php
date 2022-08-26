@@ -115,8 +115,9 @@ class PostController extends Controller
             }
             $file = $data["cover_img"];
             $percorsoFile = Storage::put("/post_image", $file);
+             $post->cover_img = $percorsoFile;
         }
-        $post->cover_img = $percorsoFile;
+       
         $post->update($data);
         
         return redirect()->route("admin.posts.index");

@@ -8,6 +8,7 @@ use App\Tag;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -42,19 +43,21 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {  
         $data=$request->validate([
             "name"=>"required|min:8",
             "content"=>"required|min:15",
             "slug"=>"nullable",
-            "tags"=>"nullable|exists:tags,id"
-            
+            "tags"=>"nullable|exists:tags,id",
+            "cover_img"=>"required|image"
         ]);
+       
         $post=new Post();
-        
+        $file=$data["cover_img"];
+        $percorsoFile = Storage::put("/post_image", $file);
         $post->fill($data);
         $post->user_id = Auth::user()->id;
-        
+        $post->cover_img=$percorsoFile;
         $post->save();
        
         if (key_exists("tags", $data)) {

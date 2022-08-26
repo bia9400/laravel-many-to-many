@@ -2,8 +2,12 @@
 
 @section('content')
     <div class="container ">
-        <form action="{{ route('admin.posts.store') }}" method="post">
+        <form action="{{ route('admin.posts.store') }}" method="post" enctype="multipart/form-data">
             @csrf
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Carica imagine</label>
+                <input name="cover_img" class="form-control" type="file" id="formFile">
+              </div>
             <div class="mb-3 ">
                 <label for="exampleFormControlInput1" class="form-label">Nome Post</label>
                 <input name="name" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nome Post"

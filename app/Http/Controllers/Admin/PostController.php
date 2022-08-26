@@ -137,4 +137,8 @@ class PostController extends Controller
         $post->delete();
         return redirect()->route("admin.posts.index");
     }
+    public function download($id){
+        $post=Post::findOrFail($id);
+        return Storage::download($post->cover_img);
+    }
 }

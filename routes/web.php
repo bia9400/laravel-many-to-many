@@ -30,6 +30,7 @@ Route::middleware("auth")
     
  Route::resource("users", "UserController");
     Route::resource("posts", "PostController");
+    Route::get('/posts/{post}/download', 'PostController@download')->name('post.download');
    
 
   });

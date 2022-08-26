@@ -19,9 +19,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts=Post::all();
-    
-        
+        $posts = Post::all();
+
+
         return view("admin.posts.index", compact("posts"));
     }
 
@@ -32,7 +32,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        $tags=Tag::all();
+        $tags = Tag::all();
         return view("admin.posts.create", compact("tags"));
     }
 
@@ -43,29 +43,28 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {  
-        $data=$request->validate([
-            "name"=>"required|min:8",
-            "content"=>"required|min:15",
-            "slug"=>"nullable",
-            "tags"=>"nullable|exists:tags,id",
-            "cover_img"=>"required|image"
+    {
+        $data = $request->validate([
+            "name" => "required|min:8",
+            "content" => "required|min:15",
+            "slug" => "nullable",
+            "tags" => "nullable|exists:tags,id",
+            "cover_img" => "required|image"
         ]);
-       
-        $post=new Post();
-        $file=$data["cover_img"];
+
+        $post = new Post();
+        $file = $data["cover_img"];
         $percorsoFile = Storage::put("/post_image", $file);
         $post->fill($data);
         $post->user_id = Auth::user()->id;
-        $post->cover_img=$percorsoFile;
+        $post->cover_img = $percorsoFile;
         $post->save();
-       
+
         if (key_exists("tags", $data)) {
             $post->tags()->attach($data["tags"]);
         }
-       
-        return redirect()->route("admin.posts.show",$post->id);
-        
+
+        return redirect()->route("admin.posts.show", $post->id);
     }
 
     /**
@@ -76,8 +75,8 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post=Post::findOrFail($id);
-        return view("admin.posts.show",compact("post"));
+        $post = Post::findOrFail($id);
+        return view("admin.posts.show", compact("post"));
     }
 
     /**
@@ -88,8 +87,8 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $post=Post::findOrFail($id);
-        return view("admin.posts.edit",compact("post"));
+        $post = Post::findOrFail($id);
+        return view("admin.posts.edit", compact("post"));
     }
 
     /**
@@ -101,22 +100,25 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data=$request->validate([
-            "name"=>"required|min:8",
-            "content"=>"required|min:15",
-            "slug"=>"nullable",
-            "cover_img"=>"required|image"
+        $data = $request->validate([
+            "name" => "required|min:8",
+            "content" => "required|min:15",
+            "slug" => "nullable",
+            "cover_img" => "required|image"
         ]);
-        
-        $post=Post::findOrFail($id);
-        if(key_exists("cover_img",$data)){
-            if($post->cover_img){
+
+        $post = Post::findOrFail($id);
+        if (key_exists("cover_img", $data)) {
+            if ($post->cover_img) {
 
                 Storage::delete($post->cover_img);
             }
+            $file = $data["cover_img"];
+            $percorsoFile = Storage::put("/post_image", $file);
         }
+        $post->cover_img = $percorsoFile;
         $post->update($data);
-      
+        
         return redirect()->route("admin.posts.index");
     }
 
@@ -128,9 +130,10 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $post=Post::findOrFail($id);
+        $post = Post::findOrFail($id);
+        $post->tags()->detach();
+        Storage::delete($post->cover_img);
         $post->delete();
         return redirect()->route("admin.posts.index");
-
     }
 }
